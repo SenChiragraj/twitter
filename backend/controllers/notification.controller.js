@@ -30,3 +30,22 @@ export const deleteNotifications = async (req, res) => {
 		res.status(500).json({ error: "Internal Server Error" });
 	}
 };
+
+export const createNotifications = async (req, res) => {
+	try {
+		const { type, to } = req.body;
+		const user = req.user;
+
+		const notification = new Notification({
+				type,
+				from: user._id,
+				to: to,
+			});
+		await notification.save();
+
+		res.status(200);
+	} catch (error) {
+		console.log("Error in createNotifications function", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+}

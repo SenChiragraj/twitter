@@ -1,4 +1,4 @@
-import Notification from "../models/notification.model.js";
+import { sendNotifications } from "../middleware/notification.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -113,12 +113,14 @@ export const likeUnlikePost = async (req, res) => {
 			await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
 			await post.save();
 
-			const notification = new Notification({
-				from: userId,
-				to: post.user,
-				type: "like",
-			});
-			await notification.save();
+			// const notification = new Notification({
+			// 	from: userId,
+			// 	to: post.user,
+			// 	type: "like",
+			// });
+			// await notification.save();
+
+			await sendNotifications("like", userId, post.user);
 
 			const updatedLikes = post.likes;
 			res.status(200).json(updatedLikes);
